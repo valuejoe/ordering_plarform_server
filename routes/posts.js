@@ -1,8 +1,64 @@
 const router = require("express").Router();
 const verify = require("./verifyToken");
+const Menu = require("../model/Menu");
+const Category = require("../model/Category");
+const { categoryValidation, menuValidation } = require("../validation");
 
-router.get("/", verify, (req, res) => {
-    res.json({ posts: { title: "my first posts" } });
+router.get("/", async (req, res) => {
+    try {
+        const menuData = await Menu.find();
+        res.send(menuData);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+router.post("/addMenu", async (req, res) => {
+    // validate menu
+    const { error } = menuValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    // Check if the menu is already exist
+    const menuExist = await Menu.findOne({ title: req.body.title });
+    if (menuExist) return res.status(400).send(`menu already exist`);
+
+    const haveCategory = await Category.findOne({ name: req.body.category });
+    if (!haveCategory) return res.status(400).send(`Category not found`);
+
+    const menu = new Menu({
+        title: req.body.title,
+        cost: req.body.cost,
+        category: req.body.category
+    });
+    try {
+        const savedMenu = await menu.save();
+        res.status(200).send({
+            message: `menu ${menu._id} create successfully!`
+        });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+router.post("/addCategory", async (req, res) => {
+    const { error } = categoryValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const categoryExist = await Category.findOne({ name: req.body.name });
+    if (categoryExist) return res.status(400).send(`category already exist`);
+
+    const category = new Category({
+        id: req.body.id,
+        name: req.body.name
+    });
+    try {
+        const savedCategory = await category.save();
+        res.status(200).send({
+            message: `menu ${category._id} create successfully!`
+        });
+    } catch (err) {
+        res.status(400).send(err);
+    }
 });
 
 router.post("/upload", async (req, res) => {

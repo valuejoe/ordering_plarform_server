@@ -31,5 +31,30 @@ const loginValidation = data => {
     return Joi.validate(data, schema);
 };
 
+const categoryValidation = data => {
+    const schema = {
+        id: Joi.number().required(),
+        name: Joi.string().required()
+    };
+    return Joi.validate(data, schema);
+};
+
+const menuValidation = data => {
+    const schema = {
+        title: Joi.string()
+            .max(256)
+            .required(),
+        cost: Joi.number()
+            .max(256)
+            .required(),
+        category: Joi.string()
+            .max(256)
+            .required()
+    };
+    return Joi.validate(data, schema);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
+module.exports.categoryValidation = categoryValidation;
+module.exports.menuValidation = menuValidation;
