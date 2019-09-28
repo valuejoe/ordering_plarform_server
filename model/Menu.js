@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const menuSchema = new mongoose.Schema({
+    index: {
+        type: Number,
+        max: 256
+    },
     title: {
         type: String,
         require: true,

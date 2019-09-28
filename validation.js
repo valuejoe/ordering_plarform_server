@@ -33,7 +33,6 @@ const loginValidation = data => {
 
 const categoryValidation = data => {
     const schema = {
-        id: Joi.number().required(),
         name: Joi.string().required()
     };
     return Joi.validate(data, schema);
@@ -41,6 +40,8 @@ const categoryValidation = data => {
 
 const menuValidation = data => {
     const schema = {
+        index: Joi.number()
+            .max(256),
         title: Joi.string()
             .max(256)
             .required(),
@@ -53,6 +54,7 @@ const menuValidation = data => {
     };
     return Joi.validate(data, schema);
 };
+
 
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;

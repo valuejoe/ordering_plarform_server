@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
-    id: {
-        type: Number,
-        require: true,
-        max: 256
-    },
     name: {
         type: String,
         require: true,

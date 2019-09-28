@@ -3,7 +3,9 @@ const verify = require("./verifyToken");
 const Menu = require("../model/Menu");
 const Category = require("../model/Category");
 const { categoryValidation, menuValidation } = require("../validation");
+const fs = require("fs");
 
+// fetch all menu
 router.get("/", async (req, res) => {
     try {
         const menuData = await Menu.find();
@@ -13,6 +15,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// add menu
 router.post("/addMenu", async (req, res) => {
     // validate menu
     const { error } = menuValidation(req.body);
@@ -40,6 +43,7 @@ router.post("/addMenu", async (req, res) => {
     }
 });
 
+// add category
 router.post("/addCategory", async (req, res) => {
     const { error } = categoryValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -61,6 +65,7 @@ router.post("/addCategory", async (req, res) => {
     }
 });
 
+// add image
 router.post("/upload", async (req, res) => {
     // console.log(__dirname);
     try {
@@ -88,6 +93,28 @@ router.post("/upload", async (req, res) => {
         }
     } catch (err) {
         res.status(500).send(err);
+    }
+});
+
+router.delete("/delete", async (req, res) => {
+    const menuId = req.body._id;
+    try {
+        const deleteMenu = await Menu.deleteOne({ _id: menuId });
+        res.status(200).send({ message: `menu ${menuId} delete successfully` });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+router.delete("/deleteImg", async (req, res) => {
+    const menuId = req.body._id;
+    try {
+        fs.unlinkSync(`./uploads/${menuId}.jpg`);
+        res.status(200).send({
+            message: `Image ${menuId}.jpg delete successfully`
+        });
+    } catch (err) {
+        res.status(400).send(err);
     }
 });
 
