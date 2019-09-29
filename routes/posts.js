@@ -108,11 +108,12 @@ router.post("/upload", async (req, res) => {
     }
 });
 
+// delete menu
 router.delete("/delete/menu", async (req, res) => {
     const menuId = req.body._id;
     // check is menu already exist
-    const isMenuExist = await Menu.findOne({ _id: menuId });
-    if (!isMenuExist)
+    const isExist = await Menu.findOne({ _id: menuId });
+    if (!isExist)
         return res.status(400).send({ message: `Menu ${menuId} not found` });
 
     try {
@@ -123,6 +124,27 @@ router.delete("/delete/menu", async (req, res) => {
     }
 });
 
+//delete category
+router.delete("/delete/category", async (req, res) => {
+    const categoryId = req.body._id;
+    // check is menu already exist
+    const isExist = await Category.findOne({ _id: categoryId });
+    if (!isExist)
+        return res
+            .status(400)
+            .send({ message: `Menu ${categoryId} not found` });
+
+    try {
+        const deleteCategory = await Menu.deleteOne({ _id: categoryId });
+        res.status(200).send({
+            message: `menu ${categoryId} delete successfully`
+        });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+//delete img
 router.delete("/delete/img", async (req, res) => {
     const menuId = req.body._id;
     try {
