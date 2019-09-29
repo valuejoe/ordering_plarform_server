@@ -5,11 +5,21 @@ const Category = require("../model/Category");
 const { categoryValidation, menuValidation } = require("../validation");
 const fs = require("fs");
 
-// fetch all menu
-router.get("/", async (req, res) => {
+// get all menu
+router.get("/menu", async (req, res) => {
     try {
-        const menuData = await Menu.find();
-        res.send(menuData);
+        const getMenu = await Menu.find();
+        res.send(getMenu);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+// get all category
+router.get("/category", async (req, res) => {
+    try {
+        const getCategory = await Category.find();
+        res.send(getCategory);
     } catch (err) {
         res.status(400).send(err);
     }
