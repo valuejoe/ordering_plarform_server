@@ -29,15 +29,20 @@ router.get("/category", async (req, res) => {
 router.post("/add/menu", async (req, res) => {
     // validate menu
     const { error } = menuValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error)
+        return res
+            .status(400)
+            .send({ [error.details[0].context.key]: error.details[0].message });
 
     // Check is the menu is already exist
     const menuExist = await Menu.findOne({ title: req.body.title });
-    if (menuExist) return res.status(400).send(`menu already exist`);
+    if (menuExist)
+        return res.status(400).send({ message: `Menu already exist` });
 
     // Check is category exist
     const haveCategory = await Category.findOne({ name: req.body.category });
-    if (!haveCategory) return res.status(400).send(`Category not found`);
+    if (!haveCategory)
+        return res.status(400).send({ message: `Category not found` });
 
     const menu = new Menu({
         title: req.body.title,
@@ -46,9 +51,7 @@ router.post("/add/menu", async (req, res) => {
     });
     try {
         const savedMenu = await menu.save();
-        res.status(200).send({
-            message: `menu ${menu._id} create successfully!`
-        });
+        res.status(200).send(savedMenu);
     } catch (err) {
         res.status(400).send(err);
     }
@@ -58,11 +61,22 @@ router.post("/add/menu", async (req, res) => {
 router.post("/add/category", async (req, res) => {
     // validate category
     const { error } = categoryValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error)
+        return res
+            .status(400)
+            .send({ [error.details[0].context.key]: error.details[0].message });
 
     // check is category already exist
     const categoryExist = await Category.findOne({ name: req.body.name });
-    if (categoryExist) return res.status(400).send(`category already exist`);
+    if (categoryExist)
+        return res.status(400).send({ message: `Category already exist` });
+
+    // limit category count
+    const categoryCount = await Category.estimatedDocumentCount();
+    if (categoryCount >= 4)
+        return res
+            .status(400)
+            .send({ message: `Category reached the maximum number` });
 
     const category = new Category({
         id: req.body.id,
@@ -70,9 +84,7 @@ router.post("/add/category", async (req, res) => {
     });
     try {
         const savedCategory = await category.save();
-        res.status(200).send({
-            message: `menu ${category._id} create successfully!`
-        });
+        res.status(200).send(savedCategory);
     } catch (err) {
         res.status(400).send(err);
     }
@@ -90,7 +102,7 @@ router.post("/upload", async (req, res) => {
             //Use the name of the input field to retrieve the uploaded file
             let uploadFile = req.files.file;
             //Use the mv() method to place the file in upload directory
-            uploadFile.mv(`./uploads/` + uploadFile.name);
+            uploadFile.mv(`./uploads/${uploadFile.name}.jpg`);
 
             //send response
             res.send({

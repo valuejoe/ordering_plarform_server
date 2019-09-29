@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const menuSchema = new mongoose.Schema({
     index: {
         type: Number,
-        max: 256
     },
     title: {
         type: String,
@@ -13,7 +12,6 @@ const menuSchema = new mongoose.Schema({
     cost: {
         type: Number,
         require: true,
-        max: 256
     },
     category: {
         type: String,

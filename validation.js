@@ -43,12 +43,11 @@ const categoryValidation = data => {
 //menu validation
 const menuValidation = data => {
     const schema = {
-        index: Joi.number().max(256),
+        index: Joi.number(),
         title: Joi.string()
             .max(256)
             .required(),
         cost: Joi.number()
-            .max(256)
             .required(),
         category: Joi.string()
             .max(256)
