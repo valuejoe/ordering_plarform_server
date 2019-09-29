@@ -31,10 +31,11 @@ router.post("/addMenu", async (req, res) => {
     const { error } = menuValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    // Check if the menu is already exist
+    // Check is the menu is already exist
     const menuExist = await Menu.findOne({ title: req.body.title });
     if (menuExist) return res.status(400).send(`menu already exist`);
 
+    // Check is category exist
     const haveCategory = await Category.findOne({ name: req.body.category });
     if (!haveCategory) return res.status(400).send(`Category not found`);
 
@@ -55,9 +56,11 @@ router.post("/addMenu", async (req, res) => {
 
 // add category
 router.post("/addCategory", async (req, res) => {
+    // validate category
     const { error } = categoryValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
+    // check is category already exist
     const categoryExist = await Category.findOne({ name: req.body.name });
     if (categoryExist) return res.status(400).send(`category already exist`);
 
@@ -77,17 +80,17 @@ router.post("/addCategory", async (req, res) => {
 
 // add image
 router.post("/upload", async (req, res) => {
-    // console.log(__dirname);
+
     try {
-        if (!req.files) {
+        if (!req.files) { 
             res.send({
                 status: false,
                 message: "No file uploaded"
             });
         } else {
-            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+            //Use the name of the input field to retrieve the uploaded file
             let uploadFile = req.files.file;
-            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            //Use the mv() method to place the file in upload directory 
             uploadFile.mv(`./uploads/` + uploadFile.name);
 
             //send response

@@ -5,6 +5,7 @@ const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const verify = require("./verifyToken");
 
+// register account
 router.post("/register", async (req, res) => {
     //VALIDATE req DATA
     const { error } = registerValidation(req.body);
@@ -31,6 +32,7 @@ router.post("/register", async (req, res) => {
     }
 });
 
+// login
 router.post("/login", async (req, res) => {
     //VALIDATE req DATA
     const { error } = loginValidation(req.body);
@@ -56,6 +58,7 @@ router.post("/login", async (req, res) => {
     res.header("Authorization", `Bearer ${token}`).send(`Bearer ${token}`);
 });
 
+// delete account
 router.delete("/delete", verify, async (req, res) => {
     const userId = req.user._id;
     try {
@@ -66,6 +69,7 @@ router.delete("/delete", verify, async (req, res) => {
     }
 });
 
+// update testing
 router.patch("/update", async (req, res) => {
     try {
         const userUpdate = await User.update(
@@ -78,4 +82,5 @@ router.patch("/update", async (req, res) => {
         res.status(400).json(err);
     }
 });
+
 module.exports = router;
