@@ -26,7 +26,7 @@ router.get("/category", async (req, res) => {
 });
 
 // add menu
-router.post("/addMenu", async (req, res) => {
+router.post("/add/menu", async (req, res) => {
     // validate menu
     const { error } = menuValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -55,7 +55,7 @@ router.post("/addMenu", async (req, res) => {
 });
 
 // add category
-router.post("/addCategory", async (req, res) => {
+router.post("/add/category", async (req, res) => {
     // validate category
     const { error } = categoryValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -80,9 +80,8 @@ router.post("/addCategory", async (req, res) => {
 
 // add image
 router.post("/upload", async (req, res) => {
-
     try {
-        if (!req.files) { 
+        if (!req.files) {
             res.send({
                 status: false,
                 message: "No file uploaded"
@@ -90,7 +89,7 @@ router.post("/upload", async (req, res) => {
         } else {
             //Use the name of the input field to retrieve the uploaded file
             let uploadFile = req.files.file;
-            //Use the mv() method to place the file in upload directory 
+            //Use the mv() method to place the file in upload directory
             uploadFile.mv(`./uploads/` + uploadFile.name);
 
             //send response
@@ -109,8 +108,13 @@ router.post("/upload", async (req, res) => {
     }
 });
 
-router.delete("/delete", async (req, res) => {
+router.delete("/delete/menu", async (req, res) => {
     const menuId = req.body._id;
+    // check is menu already exist
+    const isMenuExist = await Menu.findOne({ _id: menuId });
+    if (!isMenuExist)
+        return res.status(400).send({ message: `Menu ${menuId} not found` });
+
     try {
         const deleteMenu = await Menu.deleteOne({ _id: menuId });
         res.status(200).send({ message: `menu ${menuId} delete successfully` });
@@ -119,7 +123,7 @@ router.delete("/delete", async (req, res) => {
     }
 });
 
-router.delete("/deleteImg", async (req, res) => {
+router.delete("/delete/img", async (req, res) => {
     const menuId = req.body._id;
     try {
         fs.unlinkSync(`./uploads/${menuId}.jpg`);
