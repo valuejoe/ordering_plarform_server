@@ -25,6 +25,16 @@ router.get("/category", async (req, res) => {
     }
 });
 
+//get category by id
+router.get("/category/:uid", async (req, res) => {
+    try {
+        const getCategory = await Category.find({ _id: req.params.uid });
+        res.status(200).send(getCategory);
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
 // add menu
 router.post("/add/menu", verify, async (req, res) => {
     // validate menu
@@ -40,14 +50,14 @@ router.post("/add/menu", verify, async (req, res) => {
         return res.status(400).send({ message: `Menu already exist` });
 
     // Check is category exist
-    const haveCategory = await Category.findOne({ name: req.body.category });
+    const haveCategory = await Category.findOne({ _id: req.body.category });
     if (!haveCategory)
         return res.status(400).send({ message: `Category not found` });
 
     const menu = new Menu({
         title: req.body.title,
         cost: req.body.cost,
-        category: req.body.category
+        category: haveCategory._id
     });
     try {
         const savedMenu = await menu.save();
@@ -147,7 +157,7 @@ router.delete("/delete/category", verify, async (req, res) => {
             .send({ message: `Menu ${categoryId} not found` });
 
     try {
-        const deleteCategory = await Menu.deleteOne({ _id: categoryId });
+        const deleteCategory = await Category.deleteOne({ _id: categoryId });
         res.status(200).send({
             message: `menu ${categoryId} delete successfully`
         });

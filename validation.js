@@ -47,11 +47,8 @@ const menuValidation = data => {
         title: Joi.string()
             .max(256)
             .required(),
-        cost: Joi.number()
-            .required(),
-        category: Joi.string()
-            .max(256)
-            .required()
+        cost: Joi.number().required(),
+        category: Joi.string().required()
     };
     return Joi.validate(data, schema);
 };

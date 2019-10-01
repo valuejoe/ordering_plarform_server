@@ -14,7 +14,7 @@ const menuSchema = new mongoose.Schema({
         require: true,
     },
     category: {
-        type: String,
+        type: Object,
         require: true,
         max: 256
     },
