@@ -18,7 +18,7 @@ router.get("/menu", async (req, res) => {
 // get all category
 router.get("/category", async (req, res) => {
     try {
-        const getCategory = await Category.find();
+        const getCategory = await Category.find().sort({ date: 1 });
         res.send(getCategory);
     } catch (err) {
         res.status(400).send(err);
@@ -26,7 +26,7 @@ router.get("/category", async (req, res) => {
 });
 
 // add menu
-router.post("/add/menu", async (req, res) => {
+router.post("/add/menu", verify, async (req, res) => {
     // validate menu
     const { error } = menuValidation(req.body);
     if (error)
@@ -58,7 +58,7 @@ router.post("/add/menu", async (req, res) => {
 });
 
 // add category
-router.post("/add/category", async (req, res) => {
+router.post("/add/category", verify, async (req, res) => {
     // validate category
     const { error } = categoryValidation(req.body);
     if (error)
@@ -91,7 +91,7 @@ router.post("/add/category", async (req, res) => {
 });
 
 // add image
-router.post("/upload", async (req, res) => {
+router.post("/upload", verify, async (req, res) => {
     try {
         if (!req.files) {
             res.send({
@@ -121,7 +121,7 @@ router.post("/upload", async (req, res) => {
 });
 
 // delete menu
-router.delete("/delete/menu", async (req, res) => {
+router.delete("/delete/menu", verify, async (req, res) => {
     const menuId = req.body._id;
     // check is menu already exist
     const isExist = await Menu.findOne({ _id: menuId });
@@ -137,7 +137,7 @@ router.delete("/delete/menu", async (req, res) => {
 });
 
 //delete category
-router.delete("/delete/category", async (req, res) => {
+router.delete("/delete/category", verify, async (req, res) => {
     const categoryId = req.body._id;
     // check is menu already exist
     const isExist = await Category.findOne({ _id: categoryId });
@@ -157,7 +157,7 @@ router.delete("/delete/category", async (req, res) => {
 });
 
 //delete img
-router.delete("/delete/img", async (req, res) => {
+router.delete("/delete/img", verify, async (req, res) => {
     const menuId = req.body._id;
     try {
         fs.unlinkSync(`./uploads/${menuId}.jpg`);
@@ -169,4 +169,23 @@ router.delete("/delete/img", async (req, res) => {
     }
 });
 
+//update menu
+router.patch("/update/menu", verify, async (req, res) => {
+    const menuId = req.body._id;
+    try {
+        const updateMenu = await Menu.update(
+            { _id: menuId },
+            {
+                $set: {
+                    title: req.body.title,
+                    cost: req.body.cost,
+                    category: req.body.category
+                }
+            }
+        );
+        res.status(200).send({ message: `menu ${menuId} update successfully` });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
 module.exports = router;
