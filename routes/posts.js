@@ -132,6 +132,7 @@ router.post("/upload", verify, async (req, res) => {
 
 // delete menu
 router.delete("/delete/menu", verify, async (req, res) => {
+    console.log(req.body);
     const menuId = req.body._id;
     // check is menu already exist
     const isExist = await Menu.findOne({ _id: menuId });
@@ -140,6 +141,9 @@ router.delete("/delete/menu", verify, async (req, res) => {
 
     try {
         const deleteMenu = await Menu.deleteOne({ _id: menuId });
+        if (fs.existsSync(`./uploads/${menuId}.jpg`)) {
+            fs.unlinkSync(`./uploads/${menuId}.jpg`);
+        }
         res.status(200).send({ message: `menu ${menuId} delete successfully` });
     } catch (err) {
         res.status(400).send(err);
@@ -149,12 +153,19 @@ router.delete("/delete/menu", verify, async (req, res) => {
 //delete category
 router.delete("/delete/category", verify, async (req, res) => {
     const categoryId = req.body._id;
-    // check is menu already exist
+    // check is category already exist
     const isExist = await Category.findOne({ _id: categoryId });
     if (!isExist)
         return res
             .status(400)
-            .send({ message: `Menu ${categoryId} not found` });
+            .send({ message: `Category ${categoryId} not found` });
+
+    // check have any menu
+    const haveMenu = await Menu.findOne({ category: categoryId });
+    if (haveMenu)
+        return res
+            .status(400)
+            .send({ message: `There have some menu in category` });
 
     try {
         const deleteCategory = await Category.deleteOne({ _id: categoryId });
@@ -167,7 +178,7 @@ router.delete("/delete/category", verify, async (req, res) => {
 });
 
 //delete img
-router.delete("/delete/img", verify, async (req, res) => {
+router.delete("/delete/img", async (req, res) => {
     const menuId = req.body._id;
     try {
         fs.unlinkSync(`./uploads/${menuId}.jpg`);
@@ -198,4 +209,21 @@ router.patch("/update/menu", verify, async (req, res) => {
         res.status(400).send(err);
     }
 });
+
+//update category
+router.patch("/update/category", verify, async (req, res) => {
+    const categoryId = req.body._id;
+    try {
+        const updateCategory = await Category.update(
+            { _id: categoryId },
+            { $set: { name: req.body.name } }
+        );
+        res.status(200).send({
+            message: `Category ${categoryId} update successfully`
+        });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
 module.exports = router;
