@@ -8,7 +8,7 @@ const morgan = require("morgan");
 //Import Routes
 const authRoute = require("./routes/auth");
 const postsRoute = require("./routes/posts");
-
+const orderRoute = require("./routes/order");
 dotenv.config();
 
 //Connect to DB
@@ -31,6 +31,7 @@ app.use(morgan("dev"));
 //Route Middlewares
 app.use("/api/user", authRoute);
 app.use("/api/posts", postsRoute);
+app.use("/api/order", orderRoute);
 app.use("/public", express.static(__dirname + "/uploads"));
 
 app.listen(process.env.API_PORT, () => console.log("Server up and running..."));

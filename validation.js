@@ -53,7 +53,24 @@ const menuValidation = data => {
     return Joi.validate(data, schema);
 };
 
+//order validation
+const orderValidation = data => {
+    const schema = {
+        order: Joi.array()
+            .items(
+                Joi.object({
+                    title: Joi.string().required(),
+                    count: Joi.number().required(),
+                    cost: Joi.number().required()
+                }).unknown(true)
+            )
+            .required()
+    };
+    return Joi.validate(data, schema);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.categoryValidation = categoryValidation;
 module.exports.menuValidation = menuValidation;
+module.exports.orderValidation = orderValidation;

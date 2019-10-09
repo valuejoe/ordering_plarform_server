@@ -70,17 +70,17 @@ router.delete("/delete", verify, async (req, res) => {
 });
 
 // update testing
-router.patch("/update", async (req, res) => {
-    try {
-        const userUpdate = await User.update(
-            { _id: req.body._id },
-            { $set: { profile: req.body.profile } },
-            { multi: true }
-        );
-        res.json(userUpdate);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
+// router.patch("/update", async (req, res) => {
+//     try {
+//         const userUpdate = await User.update(
+//             { _id: req.body._id },
+//             { $set: { profile: req.body.profile } },
+//             { multi: true }
+//         );
+//         res.json(userUpdate);
+//     } catch (err) {
+//         res.status(400).json(err);
+//     }
+// });
 
 module.exports = router;

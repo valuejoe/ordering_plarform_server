@@ -132,14 +132,17 @@ router.post("/upload", verify, async (req, res) => {
 
 // delete menu
 router.delete("/delete/menu", verify, async (req, res) => {
-    console.log(req.body);
     const menuId = req.body._id;
-    // check is menu already exist
-    const isExist = await Menu.findOne({ _id: menuId });
-    if (!isExist)
-        return res.status(400).send({ message: `Menu ${menuId} not found` });
 
     try {
+        // check is menu already exist
+        const isExist = await Menu.findOne({ _id: menuId });
+        if (!isExist)
+            return res
+                .status(400)
+                .send({ message: `Menu ${menuId} not found` });
+
+        // delete Menu
         const deleteMenu = await Menu.deleteOne({ _id: menuId });
         if (fs.existsSync(`./uploads/${menuId}.jpg`)) {
             fs.unlinkSync(`./uploads/${menuId}.jpg`);
@@ -153,21 +156,22 @@ router.delete("/delete/menu", verify, async (req, res) => {
 //delete category
 router.delete("/delete/category", verify, async (req, res) => {
     const categoryId = req.body._id;
-    // check is category already exist
-    const isExist = await Category.findOne({ _id: categoryId });
-    if (!isExist)
-        return res
-            .status(400)
-            .send({ message: `Category ${categoryId} not found` });
-
-    // check have any menu
-    const haveMenu = await Menu.findOne({ category: categoryId });
-    if (haveMenu)
-        return res
-            .status(400)
-            .send({ message: `There have some menu in category` });
-
     try {
+        // check is category already exist
+        const isExist = await Category.findOne({ _id: categoryId });
+        if (!isExist)
+            return res
+                .status(400)
+                .send({ message: `Category ${categoryId} not found` });
+
+        // check have any menu
+        const haveMenu = await Menu.findOne({ category: categoryId });
+        if (haveMenu)
+            return res
+                .status(400)
+                .send({ message: `There have some menu in category` });
+
+        // delete category
         const deleteCategory = await Category.deleteOne({ _id: categoryId });
         res.status(200).send({
             message: `menu ${categoryId} delete successfully`
@@ -178,7 +182,7 @@ router.delete("/delete/category", verify, async (req, res) => {
 });
 
 //delete img
-router.delete("/delete/img", async (req, res) => {
+router.delete("/delete/img", verify, async (req, res) => {
     const menuId = req.body._id;
     try {
         fs.unlinkSync(`./uploads/${menuId}.jpg`);
