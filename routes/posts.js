@@ -36,7 +36,7 @@ router.get("/category/:uid", async (req, res) => {
 });
 
 // add menu
-router.post("/add/menu", verify, async (req, res) => {
+router.post("/menu", verify, async (req, res) => {
     // validate menu
     const { error } = menuValidation(req.body);
     if (error)
@@ -68,7 +68,7 @@ router.post("/add/menu", verify, async (req, res) => {
 });
 
 // add category
-router.post("/add/category", verify, async (req, res) => {
+router.post("/category", verify, async (req, res) => {
     // validate category
     const { error } = categoryValidation(req.body);
     if (error)
@@ -101,7 +101,7 @@ router.post("/add/category", verify, async (req, res) => {
 });
 
 // add image
-router.post("/upload", verify, async (req, res) => {
+router.post("/img", verify, async (req, res) => {
     try {
         if (!req.files) {
             res.send({
@@ -131,7 +131,7 @@ router.post("/upload", verify, async (req, res) => {
 });
 
 // delete menu
-router.delete("/delete/menu", verify, async (req, res) => {
+router.delete("/menu", verify, async (req, res) => {
     const menuId = req.body._id;
 
     try {
@@ -154,7 +154,7 @@ router.delete("/delete/menu", verify, async (req, res) => {
 });
 
 //delete category
-router.delete("/delete/category", verify, async (req, res) => {
+router.delete("/category", verify, async (req, res) => {
     const categoryId = req.body._id;
     try {
         // check is category already exist
@@ -182,9 +182,14 @@ router.delete("/delete/category", verify, async (req, res) => {
 });
 
 //delete img
-router.delete("/delete/img", verify, async (req, res) => {
+router.delete("/img", verify, async (req, res) => {
     const menuId = req.body._id;
+
     try {
+        //is img exist
+        if (!fs.existsSync(menuId))
+            return res.send({ message: `img not found` });
+
         fs.unlinkSync(`./uploads/${menuId}.jpg`);
         res.status(200).send({
             message: `Image ${menuId}.jpg delete successfully`
@@ -195,7 +200,7 @@ router.delete("/delete/img", verify, async (req, res) => {
 });
 
 //update menu
-router.patch("/update/menu", verify, async (req, res) => {
+router.patch("/menu", verify, async (req, res) => {
     const menuId = req.body._id;
     try {
         const updateMenu = await Menu.update(
@@ -215,7 +220,7 @@ router.patch("/update/menu", verify, async (req, res) => {
 });
 
 //update category
-router.patch("/update/category", verify, async (req, res) => {
+router.patch("/category", verify, async (req, res) => {
     const categoryId = req.body._id;
     try {
         const updateCategory = await Category.update(

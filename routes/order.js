@@ -24,7 +24,7 @@ router.get("/completed", verify, async (req, res) => {
 });
 
 //add order
-router.post("/addOrder", async (req, res) => {
+router.post("/", async (req, res) => {
     const { error } = orderValidation(req.body);
     if (error)
         return res
